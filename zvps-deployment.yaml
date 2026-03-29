@@ -1,20 +1,6 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: zvps-system
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: zvps-pvc
-  namespace: zvps-system
 spec:
   accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi  # 申请 5GB 永久存储
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
