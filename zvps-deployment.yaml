@@ -3,6 +3,18 @@ kind: Namespace
 metadata:
   name: zvps-system
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zvps-pvc
+  namespace: zvps-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi  # 申请 5GB 永久存储
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,27 +30,34 @@ spec:
       labels:
         app: zvps-super
     spec:
+      # 如果你的镜像在 GHCR 是私有的，请取消下面两行的注释并创建对应的 Secret
+      # imagePullSecrets:
+      #   - name: ghcr-secret
+      securityContext:
+        fsGroup: 1000  # 确保挂载的存储卷，用户 zv (uid 1000) 有权读写
       containers:
         - name: ubuntu-node
-          # 替换为你 GHCR 上的实际镜像地址
-          image: ghcr.io/zv201413/zvps:latest
+          image: ghcr.io/zv201413/zvps:latest  # 确认这是你在 GHCR 上的镜像路径
           imagePullPolicy: Always
           env:
             - name: SSH_USER
               value: "zv"
             - name: SSH_PWD
               value: "你的自定义密码"
-            - name: CF_TOKEN
-              value: "你的CloudflareToken" # 如果不用隧道可留空
             - name: GB
               value: "true"
+            - name: CF_TOKEN
+              value: "" # 如果你有 Cloudflare Tunnel Token 可以填在这里
           ports:
             - containerPort: 22
+              name: ssh
             - containerPort: 7681
+              name: ttyd
+          volumeMounts:
+            - name: data-storage
+              mountPath: /home/zv  # 将永久存储挂载到你的家目录
           securityContext:
-            # 关键：尝试以 root 运行以执行 entrypoint.sh 中的 chown/chpasswd
-            # 如果 Kyma 集群策略极严导致启动失败，则需修改镜像改为非 root 运行
-            runAsUser: 0
+            runAsUser: 0  # 必须以 root 启动以运行 entrypoint.sh 里的初始化逻辑
             privileged: false
           resources:
             limits:
@@ -47,6 +66,10 @@ spec:
             requests:
               cpu: "200m"
               memory: "256Mi"
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: zvps-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -54,15 +77,15 @@ metadata:
   name: zvps-svc
   namespace: zvps-system
 spec:
-  type: LoadBalancer
+  type: LoadBalancer  # 自动申请公网 IP
   selector:
     app: zvps-super
   ports:
-    - name: ssh
+    - name: ssh-port
       protocol: TCP
       port: 22
       targetPort: 22
-    - name: ttyd
+    - name: ttyd-port
       protocol: TCP
-      port: 80
+      port: 80       # 外部通过 80 端口访问网页终端
       targetPort: 7681
