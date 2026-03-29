@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zvps-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zvps-super
+  namespace: zvps-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zvps-super
+  template:
+    metadata:
+      labels:
+        app: zvps-super
+    spec:
+      containers:
+        - name: ubuntu-node
+          # 替换为你 GHCR 上的实际镜像地址
+          image: ghcr.io/zv201413/zvps:latest
+          imagePullPolicy: Always
+          env:
+            - name: SSH_USER
+              value: "zv"
+            - name: SSH_PWD
+              value: "你的自定义密码"
+            - name: CF_TOKEN
+              value: "你的CloudflareToken" # 如果不用隧道可留空
+            - name: GB
+              value: "true"
+          ports:
+            - containerPort: 22
+            - containerPort: 7681
+          securityContext:
+            # 关键：尝试以 root 运行以执行 entrypoint.sh 中的 chown/chpasswd
+            # 如果 Kyma 集群策略极严导致启动失败，则需修改镜像改为非 root 运行
+            runAsUser: 0
+            privileged: false
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zvps-svc
+  namespace: zvps-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: zvps-super
+  ports:
+    - name: ssh
+      protocol: TCP
+      port: 22
+      targetPort: 22
+    - name: ttyd
+      protocol: TCP
+      port: 80
+      targetPort: 7681
