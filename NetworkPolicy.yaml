@@ -1,0 +1,22 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-all-ingress
+  namespace: zvps-system
+spec:
+  # 选择受保护的 Pod
+  podSelector:
+    matchLabels:
+      app: zvps-super
+  
+  policyTypes:
+    - Ingress
+  
+  # 允许入站规则
+  ingress:
+    - from: [] # 允许所有来源（NLB 转发流量）
+      ports:
+        - protocol: UDP
+          port: 2325 # 放行 Hysteria 2 端口
+        - protocol: UDP
+          port: 2326 # 放行 TUIC 端口

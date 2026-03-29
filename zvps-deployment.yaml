@@ -1,6 +1,3 @@
-apiVersion: v1
-spec:
-  accessModes:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,14 +13,11 @@ spec:
       labels:
         app: zvps-super
     spec:
-      # 如果你的镜像在 GHCR 是私有的，请取消下面两行的注释并创建对应的 Secret
-      # imagePullSecrets:
-      #   - name: ghcr-secret
       securityContext:
-        fsGroup: 1000  # 确保挂载的存储卷，用户 zv (uid 1000) 有权读写
+        fsGroup: 1000
       containers:
         - name: ubuntu-node
-          image: ghcr.io/zv201413/zvps:latest  # 确认这是你在 GHCR 上的镜像路径
+          image: ghcr.io/zv201413/zvps:latest 
           imagePullPolicy: Always
           env:
             - name: SSH_USER
@@ -32,38 +26,27 @@ spec:
               value: "你的自定义密码"
             - name: GB
               value: "true"
-            - name: CF_TOKEN
-              value: "" # 如果你有 Cloudflare Tunnel Token 可以填在这里
-          ports:
-            - containerPort: 22
-              name: ssh
-            - containerPort: 7681
-              name: ttyd
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
           volumeMounts:
             - name: data-storage
-              mountPath: /home/zv  # 将永久存储挂载到你的家目录
-          securityContext:
-            runAsUser: 0  # 必须以 root 启动以运行 entrypoint.sh 里的初始化逻辑
-            privileged: false
-          resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
+              mountPath: /home/zv
       volumes:
         - name: data-storage
           persistentVolumeClaim:
             claimName: zvps-pvc
+
 ---
+# 2. Service TCP: 处理 SSH 和 Web (使用标准 ELB)
 apiVersion: v1
 kind: Service
 metadata:
-  name: zvps-svc
+  name: zvps-svc-tcp
   namespace: zvps-system
 spec:
-  type: LoadBalancer  # 自动申请公网 IP
+  type: LoadBalancer
   selector:
     app: zvps-super
   ports:
@@ -73,5 +56,50 @@ spec:
       targetPort: 22
     - name: ttyd-port
       protocol: TCP
-      port: 80       # 外部通过 80 端口访问网页终端
+      port: 80
       targetPort: 7681
+
+---
+# 3. Service UDP: 处理 Hysteria 2 和 TUIC (必须使用 NLB)
+apiVersion: v1
+kind: Service
+metadata:
+  name: zvps-svc-udp
+  namespace: zvps-system
+  annotations:
+    # [修改点] 必须添加此注解，否则 AWS 无法创建支持 UDP 的负载均衡器
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  type: LoadBalancer
+  selector:
+    app: zvps-super
+  ports:
+    - name: hy-udp
+      protocol: UDP
+      port: 2325
+      targetPort: 2325
+    - name: tuic-udp
+      protocol: UDP
+      port: 2326
+      targetPort: 2326
+  externalTrafficPolicy: Cluster
+
+---
+# 4. NetworkPolicy: 开放 UDP 端口入站安全规则
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-ingress
+  namespace: zvps-system
+spec:
+  podSelector:
+    matchLabels:
+      app: zvps-super
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - protocol: UDP
+          port: 2325
+        - protocol: UDP
+          port: 2326
