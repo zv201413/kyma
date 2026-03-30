@@ -110,10 +110,7 @@ ssh <SSH_USER>@<External-IP> -p 22
 
 ## 注意事项
 
-1. UDP 服务必须使用 AWS NLB 负载均衡器（已配置 annotation）
-2. PVC 需提前创建并确保状态为 `Bound`
-3. 建议在生产环境中修改默认密码
-4. External IP 通常为 AWS ELB/NLB 域名格式：`*.elb.amazonaws.com`
+External IP 通常为 AWS ELB/NLB 域名格式：`*.elb.amazonaws.com`
 
 ---
 
@@ -122,7 +119,3 @@ ssh <SSH_USER>@<External-IP> -p 22
 使用镜像：`ghcr.io/zv201413/zvps:latest`
 
 ---
-
-## License
-
-MIT
