@@ -4,19 +4,18 @@ metadata:
   name: zvps-svc-udp
   namespace: zvps-system
   annotations:
-    # 关键注解：强制 Kyma 创建支持 UDP 的 AWS Network Load Balancer (NLB)
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
   type: LoadBalancer
   selector:
-    app: zvps-super  # 必须匹配 Pod 的标签
+    app: zvps-super 
   ports:
     - name: hy-udp
       protocol: UDP
-      port: 2325      # 外部访问端口
-      targetPort: 2325 # Pod 内部监听端口
+      port: 2325   
+      targetPort: 2325 
     - name: tuic-udp
       protocol: UDP
-      port: 2326      # 外部访问端口
-      targetPort: 2326 # Pod 内部监听端口
+      port: 2326      
+      targetPort: 2326 
   externalTrafficPolicy: Cluster
