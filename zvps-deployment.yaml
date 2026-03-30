@@ -20,8 +20,8 @@ spec:
           image: ghcr.io/zv201413/zvps:latest 
           imagePullPolicy: Always
           env:
-            - name: TTYD_OPTS
-              value: "-c admin:yourpassword123"
+            - name: TTYD
+              value: "admin:yourpassword123"
             - name: SSH_USER
               value: "你的用户名"
             - name: SSH_PWD
