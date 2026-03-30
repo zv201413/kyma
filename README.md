@@ -32,8 +32,8 @@
 修改以下环境变量：
 ```yaml
 env:
-- name: TTYD_OPTS
-  value: "-c admin:yourpassword123"  # Web 终端登录密码
+- name: TTYD
+  value: "admin:yourpassword123"  # Web 终端登录密码
 - name: SSH_USER
   value: "your_username"              # SSH 用户名
 - name: SSH_PWD
