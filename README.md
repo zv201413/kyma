@@ -25,7 +25,7 @@
 
 下载本项目文件，打开 `zvps-deployment.yaml` 进行修改：
 
-<img width="636" height="744" alt="image" src="https://github.com/user-attachments/assets/15fe1c02-ee24-4a82-8713-dfec6782295a" />
+<img width="591" height="888" alt="image" src="https://github.com/user-attachments/assets/c2b8675a-0eb6-4e2c-aeb5-35d75e687a27" />
 
 <img width="627" height="891" alt="image" src="https://github.com/user-attachments/assets/9b8dc7d6-bd3f-4eba-8fed-918f41f4f713" />
 
