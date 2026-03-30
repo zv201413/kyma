@@ -70,7 +70,7 @@ env:
 
 <img width="1388" height="730" alt="image" src="https://github.com/user-attachments/assets/e1614bbb-5170-489b-aef3-eb5bbdc6d328" />
 
-同理进入 NetworkPolicy 进行编辑替换并保存下载的 `NetworkPolicy.yaml` 文件内容，此处默认开启了两个 UDP 端口，也可自行增删或修改：
+同理进入 NetworkPolicy 进行编辑替换并保存下载的 `NetworkPolicy.yaml` 文件内容。
 
 <img width="1699" height="876" alt="image" src="https://github.com/user-attachments/assets/6cf6c06b-a22a-4644-b6d6-2991b5388993" />
 
