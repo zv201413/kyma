@@ -6,7 +6,14 @@
 
 ---
 
-## 二、部署配置文件 (zvps-ubuntu-only.yaml)
+## 二、准备工作与部署配置文件 (zvps-ubuntu-only.yaml)
+先把账户内存加上：进入账户之后点击权利——>增加服务计划——>运行时——>记忆
+<img width="1776" height="796" alt="image" src="https://github.com/user-attachments/assets/78087d3d-4a5a-4e38-967a-0cfc5cc3e92f" />
+<img width="1656" height="877" alt="image" src="https://github.com/user-attachments/assets/bcf6597b-6804-4172-9242-3c304a49b053" />
+内存单元加到4
+<img width="1440" height="761" alt="image" src="https://github.com/user-attachments/assets/08505486-0db1-45c8-a8e8-fec3eeb5fc8b" />
+启用时确定是有内存的，比如4096M
+<img width="1398" height="654" alt="image" src="https://github.com/user-attachments/assets/eed84784-d48b-4c20-95a8-8c0f9ee479b3" />
 
 
 
