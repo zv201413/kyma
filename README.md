@@ -63,7 +63,7 @@ env:
 
 <img width="1295" height="836" alt="image" src="https://github.com/user-attachments/assets/72ac6890-7777-443a-8248-60e50bfc1870" />
 
-先进入 Service，如果**是**图示的最终效果，那么已成功部署，跳至 `访问方式`;如果**不是**图示的最终效果还需要继续修改，点击第二项 `zvps-svc-udp`：
+先进入 Service，如果**是**图示的效果，那么点击 `NetworkPolicy`进行开放端口操作;如果**不是**图示的最终效果还需要继续修改，点击第二项 `zvps-svc-udp`：
 
 <img width="1486" height="365" alt="image" src="https://github.com/user-attachments/assets/673ad2d8-c2cb-49b7-8904-e86f743ffc0b" />
 
