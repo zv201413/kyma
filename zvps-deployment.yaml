@@ -21,13 +21,13 @@ spec:
           imagePullPolicy: Always
           env:
             - name: TTYD
-              value: "admin:yourpassword123"
+              value: "admin:yourpassword123"  # Web终端密码
             - name: SSH_USER
-              value: "你的用户名"
+              value: "zv"                    # SSH用户名
             - name: SSH_PWD
-              value: "你的自定义密码"
+              value: "105106"                # SSH密码
             - name: GB
-              value: "true"
+              value: "true"                  # 开启流量统计快捷键
           resources:
             requests:
               cpu: "500m"
@@ -41,7 +41,7 @@ spec:
             claimName: zvps-pvc
 
 ---
-# 2. Service TCP: 处理 SSH 和 Web (使用标准 ELB)
+# 2. Service TCP: 处理 SSH (22) 和 Web (80 -> 7681)
 apiVersion: v1
 kind: Service
 metadata:
@@ -62,14 +62,14 @@ spec:
       targetPort: 7681
 
 ---
-# 3. Service UDP: 处理 Hysteria 2 和 TUIC (必须使用 NLB)
+# 3. Service UDP: 处理 Hysteria 2 (2325) 和 TUIC (2326)
 apiVersion: v1
 kind: Service
 metadata:
   name: zvps-svc-udp
   namespace: zvps-system
   annotations:
-    # [修改点] 必须添加此注解，否则 AWS 无法创建支持 UDP 的负载均衡器
+    # 必须有此注解，AWS 才会创建支持 UDP 的 NLB
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
   type: LoadBalancer
@@ -85,23 +85,3 @@ spec:
       port: 2326
       targetPort: 2326
   externalTrafficPolicy: Cluster
-
----
-# 4. NetworkPolicy: 开放 UDP 端口入站安全规则
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-all-ingress
-  namespace: zvps-system
-spec:
-  podSelector:
-    matchLabels:
-      app: zvps-super
-  policyTypes:
-    - Ingress
-  ingress:
-    - ports:
-        - protocol: UDP
-          port: 2325
-        - protocol: UDP
-          port: 2326
