@@ -13,9 +13,9 @@
 
 | 文件 | 说明 |
 |------|------|
-| `zvps-deployment.yaml` | 主部署文件，包含 Deployment、Service(TCP)、Service(UDP)、NetworkPolicy |
-| `service.yaml` | UDP Service 单独配置（NLB 类型负载均衡器） |
-| `NetworkPolicy.yaml` | 网络策略，放行 UDP 端口入站流量 |
+| `zvps-deployment.yaml` | 主部署文件 |
+| `service.yaml` | UDP Service 单独配置 |
+| `NetworkPolicy.yaml` | 网络策略 |
 
 ---
 
