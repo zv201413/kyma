@@ -27,8 +27,8 @@
 
 <img width="636" height="744" alt="image" src="https://github.com/user-attachments/assets/15fe1c02-ee24-4a82-8713-dfec6782295a" />
 
+<img width="627" height="891" alt="image" src="https://github.com/user-attachments/assets/9b8dc7d6-bd3f-4eba-8fed-918f41f4f713" />
 
-<img width="651" height="919" alt="image" src="https://github.com/user-attachments/assets/eb545d0c-f008-4de7-9f81-d6abd6a46349" />
 
 修改以下环境变量：
 ```yaml
